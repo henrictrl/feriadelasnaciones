@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Oscar 2020-2021</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #d32f2f 0%, #f57c00 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 20px;
+            margin: 10px auto;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                padding: 40px;
+            }
+            
+            body {
+                padding: 20px;
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #d32f2f;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            line-height: 1.2;
+        }
+
+        .header h2 {
+            color: #f57c00;
+            font-size: 1em;
+            line-height: 1.3;
+        }
+
+        @media (min-width: 768px) {
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .header h2 {
+                font-size: 1.5em;
+            }
+        }
+
+        .welcome-screen, .game-screen, .results-screen, .ranking-screen {
+            display: none;
+        }
+
+        .welcome-screen.active, .game-screen.active, .results-screen.active, .ranking-screen.active {
+            display: block;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f57c00;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #d32f2f 0%, #f57c00 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: inline-block;
+            margin: 10px 5px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        @media (min-width: 768px) {
+            .btn {
+                padding: 15px 40px;
+                font-size: 18px;
+                width: auto;
+            }
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 1.2em;
+            color: #d32f2f;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        @media (min-width: 768px) {
+            .timer {
+                font-size: 1.5em;
+                margin: 20px 0;
+            }
+        }
+
+        .question-container {
+            margin: 30px 0;
+        }
+
+        .question-number {
+            color: #f57c00;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .question {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: bold;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .question {
+                font-size: 1.3em;
+            }
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        @media (min-width: 768px) {
+            .options {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .option {
+            background: #f5f5f5;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: #f57c00;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(245, 124, 0, 0.3);
+        }
+
+        .option.selected {
+            border-color: #f57c00;
+            background: #fff3e0;
+        }
+
+        .option.correct {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .option.incorrect {
+            border-color: #d32f2f;
+            background: #ffebee;
+        }
+
+        .option-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #e0e0e0;
+        }
+
+        @media (min-width: 768px) {
+            .option-image {
+                height: 250px;
+            }
+        }
+
+        .option-text {
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .option-text {
+                font-size: 16px;
+            }
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 1em;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        @media (min-width: 768px) {
+            .score-display {
+                font-size: 1.2em;
+                margin: 20px 0;
+            }
+        }
+
+        .results-summary {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #f57c00;
+        }
+
+        @media (min-width: 768px) {
+            .results-summary {
+                padding: 20px;
+                margin: 20px 0;
+            }
+        }
+
+        .results-summary h3 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            overflow-x: auto;
+            display: block;
+        }
+
+        @media (min-width: 768px) {
+            .ranking-table {
+                font-size: 16px;
+                display: table;
+            }
+        }
+
+        .ranking-table thead,
+        .ranking-table tbody,
+        .ranking-table tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        @media (max-width: 767px) {
+            .ranking-table thead {
+                display: table;
+            }
+            
+            .ranking-table tbody {
+                display: table-row-group;
+            }
+        }
+
+        .ranking-table th {
+            background: linear-gradient(135deg, #d32f2f 0%, #f57c00 100%);
+            color: white;
+            padding: 10px 5px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .ranking-table th {
+                padding: 12px;
+                font-size: 16px;
+            }
+        }
+
+        .ranking-table td {
+            padding: 8px 5px;
+            border-bottom: 1px solid #ddd;
+            word-wrap: break-word;
+        }
+
+        @media (min-width: 768px) {
+            .ranking-table td {
+                padding: 10px;
+            }
+        }
+
+        .ranking-table tr:hover {
+            background: #fff3e0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        @media (min-width: 768px) {
+            .stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+        }
+
+        .stat-card {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #f57c00;
+        }
+
+        @media (min-width: 768px) {
+            .stat-card {
+                padding: 20px;
+            }
+        }
+
+        .stat-card h4 {
+            color: #d32f2f;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .stat-card h4 {
+                font-size: 16px;
+            }
+        }
+
+        .stat-item {
+            margin: 5px 0;
+            padding: 5px;
+            background: white;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+        @media (min-width: 768px) {
+            .stat-item {
+                font-size: 14px;
+            }
+        }
+
+        .image-container {
+            width: 100%;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .image-container {
+                margin: 20px 0;
+            }
+        }
+
+        .cover-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: block;
+            margin: 0 auto;
+            max-height: 300px;
+        }
+
+        @media (min-width: 768px) {
+            .cover-image {
+                max-height: 400px;
+            }
+        }
+
+        .center-btn {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Pantalla de Bienvenida -->
+        <div class="welcome-screen active">
+            <div class="header">
+                <h1>🎬 Quiz Oscar 2020-2021 🏆</h1>
+                <h2>Feria de las Naciones - Curso de Español</h2>
+            </div>
+            <div class="image-container">
+                <img src="./images/portada-oscar.jpg" alt="Portada Oscar" class="cover-image">
+            </div>
+            <div class="input-group">
+                <label for="playerName">Tu nombre:</label>
+                <input type="text" id="playerName" placeholder="Ingresa tu nombre">
+            </div>
+            <div class="center-btn">
+                <button class="btn" onclick="startGame()">Comenzar Quiz</button>
+            </div>
+        </div>
+
+        <!-- Pantalla del Juego -->
+        <div class="game-screen">
+            <div class="timer">⏱️ Tiempo: <span id="timer">0</span>s</div>
+            <div class="score-display">Puntuación: <span id="currentScore">0</span></div>
+            
+            <div class="question-container">
+                <div class="question-number">Pregunta <span id="questionNum">1</span> de 10</div>
+                <div class="question" id="question"></div>
+                <div class="options" id="options"></div>
+            </div>
+            
+            <div class="center-btn">
+                <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Resultados -->
+        <div class="results-screen">
+            <div class="header">
+                <h1>¡Resultados!</h1>
+            </div>
+            
+            <div class="results-summary">
+                <h3>Tu desempeño:</h3>
+                <p><strong>Respuestas correctas:</strong> <span id="correctAnswers">0</span> de 10</p>
+                <p><strong>Tiempo total:</strong> <span id="totalTime">0</span> segundos</p>
+                <p><strong>Puntuación final:</strong> <span id="finalScore">0</span> puntos</p>
+            </div>
+
+            <div class="question-container">
+                <h3 style="color: #d32f2f; margin-bottom: 20px;">Preguntas Bonus:</h3>
+                
+                <div class="input-group">
+                    <label>¿Qué película te hubiera gustado que ganara el Oscar 2020?</label>
+                    <select id="bonus2020">
+                        <option value="">Selecciona una película...</option>
+                        <option value="Parásitos">Parásitos</option>
+                        <option value="1917">1917</option>
+                        <option value="Joker">Joker</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>¿Qué película te hubiera gustado que ganara el Oscar 2021?</label>
+                    <select id="bonus2021">
+                        <option value="">Selecciona una película...</option>
+                        <option value="Nomadland">Nomadland</option>
+                        <option value="El padre">El padre</option>
+                        <option value="Minari">Minari</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="center-btn">
+                <button class="btn" onclick="submitBonus()">Enviar y Ver Ranking</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Ranking -->
+        <div class="ranking-screen">
+            <div class="header">
+                <h1>🏆 Ranking Final 🏆</h1>
+            </div>
+
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Posición</th>
+                        <th>Nombre</th>
+                        <th>Puntos</th>
+                        <th>Tiempo</th>
+                    </tr>
+                </thead>
+                <tbody id="rankingBody"></tbody>
+            </table>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <h4>Preferencias Oscar 2020:</h4>
+                    <div id="stats2020"></div>
+                </div>
+                <div class="stat-card">
+                    <h4>Preferencias Oscar 2021:</h4>
+                    <div id="stats2021"></div>
+                </div>
+            </div>
+
+            <div class="center-btn">
+                <button class="btn" onclick="resetGame()">Jugar de Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "¿Qué película ganó el Oscar a Mejor Película en 2020?",
+                options: [
+                    { text: "Parásitos", image: "./images/parasitos.jpg" },
+                    { text: "1917", image: "./images/1917.jpg" },
+                    { text: "Joker", image: "./images/joker.jpg" }
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Quién ganó el Oscar al Mejor Actor en 2020?",
+                options: [
+                    { text: "Joaquin Phoenix", image: "./images/joaquin-phoenix.jpg" },
+                    { text: "Leonardo DiCaprio", image: "./images/leonardo-dicaprio.jpg" },
+                    { text: "Antonio Banderas", image: "./images/antonio-banderas.jpg" }
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Qué película ganó el Oscar a Mejor Película en 2021?",
+                options: [
+                    { text: "Nomadland", image: "./images/nomadland.jpg" },
+                    { text: "El padre", image: "./images/el-padre.jpg" },
+                    { text: "Minari", image: "./images/minari.jpg" }
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Quién dirigió 'Nomadland', ganadora del Oscar 2021?",
+                options: [
+                    { text: "Chloé Zhao", image: "./images/chloe-zhao.jpg" },
+                    { text: "Emerald Fennell", image: "./images/emerald-fennell.jpg" },
+                    { text: "Greta Gerwig", image: "./images/greta-gerwig.jpg" }
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Qué actor español fue nominado al Oscar 2020?",
+                options: [
+                    { text: "Antonio Banderas", image: "./images/antonio-banderas-nominado.jpg" },
+                    { text: "Javier Bardem", image: "./images/javier-bardem.jpg" },
+                    { text: "Penélope Cruz", image: "./images/penelope-cruz.jpg" }
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Quién ganó Mejor Actriz en 2020 por 'Judy'?",
+                options: [
+                    { text: "Renée Zellweger", image: "./images/renee-zellweger.jpg" },
+                    { text: "Scarlett Johansson", image: "./images/scarlett-johansson.jpg" },
+                    { text: "Charlize Theron", image: "./images/charlize-theron.jpg" }
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Cuántas nominaciones tuvo 'Joker' en 2020?",
+                options: [
+                    { text: "11 nominaciones", image: "./images/joker-11.jpg" },
+                    { text: "9 nominaciones", image: "./images/joker-9.jpg" },
+                    { text: "8 nominaciones", image: "./images/joker-8.jpg" }
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Quién ganó Mejor Actor en 2021 por 'El padre'?",
+                options: [
+                    { text: "Anthony Hopkins", image: "./images/anthony-hopkins.jpg" },
+                    { text: "Chadwick Boseman", image: "./images/chadwick-boseman.jpg" },
+                    { text: "Gary Oldman", image: "./images/gary-oldman.jpg" }
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Qué película de animación ganó el Oscar 2021?",
+                options: [
+                    { text: "Soul", image: "./images/soul.jpg" },
+                    { text: "Onward", image: "./images/onward.jpg" },
+                    { text: "Wolfwalkers", image: "./images/wolfwalkers.jpg" }
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Qué película ganó Mejor Película Internacional 2021?",
+                options: [
+                    { text: "Otra ronda", image: "./images/otra-ronda.jpg" },
+                    { text: "Minari", image: "./images/minari-internacional.jpg" },
+                    { text: "El agente topo", image: "./images/agente-topo.jpg" }
+                ],
+                correct: 0
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let startTime;
+        let timerInterval;
+        let playerName = "";
+        let correctCount = 0;
+
+        function startGame() {
+            playerName = document.getElementById('playerName').value.trim();
+            if (!playerName) {
+                alert('Por favor, ingresa tu nombre');
+                return;
+            }
+
+            currentQuestion = 0;
+            score = 0;
+            correctCount = 0;
+
+            document.querySelector('.welcome-screen').classList.remove('active');
+            document.querySelector('.game-screen').classList.add('active');
+            
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            showQuestion();
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            document.getElementById('timer').textContent = elapsed;
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('questionNum').textContent = currentQuestion + 1;
+            document.getElementById('question').textContent = q.question;
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            q.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.onclick = () => selectOption(index);
+                
+                const img = document.createElement('img');
+                img.src = option.image;
+                img.alt = option.text;
+                img.className = 'option-image';
+                
+                const text = document.createElement('div');
+                text.className = 'option-text';
+                text.textContent = option.text;
+                
+                optionDiv.appendChild(img);
+                optionDiv.appendChild(text);
+                optionsDiv.appendChild(optionDiv);
+            });
+
+            document.getElementById('nextBtn').disabled = true;
+        }
+
+        function selectOption(selected) {
+            const q = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach((opt, idx) => {
+                opt.onclick = null;
+                if (idx === q.correct) {
+                    opt.classList.add('correct');
+                } else if (idx === selected) {
+                    opt.classList.add('incorrect');
+                }
+            });
+
+            if (selected === q.correct) {
+                correctCount++;
+                const timeBonus = Math.max(0, 100 - Math.floor((Date.now() - startTime) / 1000));
+                score += 100 + timeBonus;
+            }
+
+            document.getElementById('currentScore').textContent = score;
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                clearInterval(timerInterval);
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const totalTime = Math.floor((Date.now() - startTime) / 1000);
+            
+            document.querySelector('.game-screen').classList.remove('active');
+            document.querySelector('.results-screen').classList.add('active');
+            
+            document.getElementById('correctAnswers').textContent = correctCount;
+            document.getElementById('totalTime').textContent = totalTime;
+            document.getElementById('finalScore').textContent = score;
+        }
+
+        function submitBonus() {
+            const bonus2020 = document.getElementById('bonus2020').value;
+            const bonus2021 = document.getElementById('bonus2021').value;
+
+            if (!bonus2020 || !bonus2021) {
+                alert('Por favor, responde ambas preguntas bonus');
+                return;
+            }
+
+            const totalTime = Math.floor((Date.now() - startTime) / 1000);
+            
+            let rankings = JSON.parse(localStorage.getItem('oscarsRanking') || '[]');
+            let bonus2020Stats = JSON.parse(localStorage.getItem('bonus2020') || '{}');
+            let bonus2021Stats = JSON.parse(localStorage.getItem('bonus2021') || '{}');
+
+            rankings.push({
+                name: playerName,
+                score: score,
+                time: totalTime,
+                correct: correctCount
+            });
+
+            bonus2020Stats[bonus2020] = (bonus2020Stats[bonus2020] || 0) + 1;
+            bonus2021Stats[bonus2021] = (bonus2021Stats[bonus2021] || 0) + 1;
+
+            rankings.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                return a.time - b.time;
+            });
+
+            localStorage.setItem('oscarsRanking', JSON.stringify(rankings));
+            localStorage.setItem('bonus2020', JSON.stringify(bonus2020Stats));
+            localStorage.setItem('bonus2021', JSON.stringify(bonus2021Stats));
+
+            showRanking();
+        }
+
+        function showRanking() {
+            document.querySelector('.results-screen').classList.remove('active');
+            document.querySelector('.ranking-screen').classList.add('active');
+
+            const rankings = JSON.parse(localStorage.getItem('oscarsRanking') || '[]');
+            const bonus2020Stats = JSON.parse(localStorage.getItem('bonus2020') || '{}');
+            const bonus2021Stats = JSON.parse(localStorage.getItem('bonus2021') || '{}');
+
+            const tbody = document.getElementById('rankingBody');
+            tbody.innerHTML = '';
+
+            rankings.slice(0, 10).forEach((player, index) => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><strong>${index + 1}</strong></td>
+                    <td>${player.name}</td>
+                    <td>${player.score}</td>
+                    <td>${player.time}s</td>
+                `;
+            });
+
+            displayStats('stats2020', bonus2020Stats);
+            displayStats('stats2021', bonus2021Stats);
+        }
+
+        function displayStats(elementId, stats) {
+            const div = document.getElementById(elementId);
+            const total = Object.values(stats).reduce((a, b) => a + b, 0);
+            
+            if (total === 0) {
+                div.innerHTML = '<div class="stat-item">Sin datos aún</div>';
+                return;
+            }
+            
+            const sorted = Object.entries(stats).sort((a, b) => b[1] - a[1]);
+            
+            div.innerHTML = sorted.map(([movie, count]) => {
+                const percentage = ((count / total) * 100).toFixed(1);
+                return `<div class="stat-item">${movie}: ${percentage}%</div>`;
+            }).join('');
+        }
+
+        function resetGame() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
