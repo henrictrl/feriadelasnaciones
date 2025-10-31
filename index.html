@@ -427,6 +427,57 @@
         .center-btn {
             text-align: center;
         }
+
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .password-modal.active {
+            display: flex;
+        }
+
+        .password-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .password-content h3 {
+            color: #d32f2f;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f57c00;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .password-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #666 0%, #999 100%);
+        }
     </style>
 </head>
 <body>
@@ -538,11 +589,61 @@
 
             <div class="center-btn">
                 <button class="btn" onclick="resetGame()">Jugar de Nuevo</button>
+                <button class="btn" onclick="showPasswordPrompt()" style="background: linear-gradient(135deg, #c62828 0%, #d84315 100%); margin-top: 20px;">🔒 Administrador: Limpiar Ranking</button>
             </div>
         </div>
     </div>
 
+    <!-- Modal de Senha -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-content">
+            <h3>🔒 Acceso de Administrador</h3>
+            <p style="margin-bottom: 15px; color: #666;">Ingresa la contraseña para limpiar el ranking:</p>
+            <input type="password" class="password-input" id="adminPassword" placeholder="Contraseña">
+            <div class="password-buttons">
+                <button class="btn btn-cancel" onclick="closePasswordModal()">Cancelar</button>
+                <button class="btn" onclick="verifyPassword()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Importar Firebase
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, set, get, remove, update } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW3vIz1wjiZVph8xsI05ajKX-rFtUiqWg",
+            authDomain: "quiz-oscar.firebaseapp.com",
+            databaseURL: "https://quiz-oscar-default-rtdb.firebaseio.com",
+            projectId: "quiz-oscar",
+            storageBucket: "quiz-oscar.firebasestorage.app",
+            messagingSenderId: "291765217655",
+            appId: "1:291765217655:web:0b896448003dc8f6619972"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Tornar funções disponíveis globalmente
+        window.firebaseDB = {
+            ref,
+            set,
+            get,
+            remove,
+            update,
+            database
+        };
+
+        console.log('Firebase inicializado correctamente');
+    </script>
+
     <script>
+        // CONFIGURACIÓN: Cambia esta contraseña por la que desees
+        const ADMIN_PASSWORD = "oscar2024";
         const questions = [
             {
                 question: "¿Qué película ganó el Oscar a Mejor Película en 2020?",
@@ -743,7 +844,7 @@
             document.getElementById('finalScore').textContent = score;
         }
 
-        function submitBonus() {
+        async function submitBonus() {
             const bonus2020 = document.getElementById('bonus2020').value;
             const bonus2021 = document.getElementById('bonus2021').value;
 
@@ -754,55 +855,100 @@
 
             const totalTime = Math.floor((Date.now() - startTime) / 1000);
             
-            let rankings = JSON.parse(localStorage.getItem('oscarsRanking') || '[]');
-            let bonus2020Stats = JSON.parse(localStorage.getItem('bonus2020') || '{}');
-            let bonus2021Stats = JSON.parse(localStorage.getItem('bonus2021') || '{}');
+            try {
+                const { ref, get, set, database } = window.firebaseDB;
+                
+                // Referências do Firebase
+                const rankingRef = ref(database, 'ranking');
+                const stats2020Ref = ref(database, 'stats2020');
+                const stats2021Ref = ref(database, 'stats2021');
 
-            rankings.push({
-                name: playerName,
-                score: score,
-                time: totalTime,
-                correct: correctCount
-            });
+                // Obter dados atuais
+                const rankingSnapshot = await get(rankingRef);
+                const stats2020Snapshot = await get(stats2020Ref);
+                const stats2021Snapshot = await get(stats2021Ref);
 
-            bonus2020Stats[bonus2020] = (bonus2020Stats[bonus2020] || 0) + 1;
-            bonus2021Stats[bonus2021] = (bonus2021Stats[bonus2021] || 0) + 1;
+                let rankings = rankingSnapshot.exists() ? rankingSnapshot.val() : [];
+                let bonus2020Stats = stats2020Snapshot.exists() ? stats2020Snapshot.val() : {};
+                let bonus2021Stats = stats2021Snapshot.exists() ? stats2021Snapshot.val() : {};
 
-            rankings.sort((a, b) => {
-                if (b.score !== a.score) return b.score - a.score;
-                return a.time - b.time;
-            });
+                // Adicionar novo jogador
+                rankings.push({
+                    name: playerName,
+                    score: score,
+                    time: totalTime,
+                    correct: correctCount,
+                    date: new Date().toISOString()
+                });
 
-            localStorage.setItem('oscarsRanking', JSON.stringify(rankings));
-            localStorage.setItem('bonus2020', JSON.stringify(bonus2020Stats));
-            localStorage.setItem('bonus2021', JSON.stringify(bonus2021Stats));
+                // Atualizar estatísticas
+                bonus2020Stats[bonus2020] = (bonus2020Stats[bonus2020] || 0) + 1;
+                bonus2021Stats[bonus2021] = (bonus2021Stats[bonus2021] || 0) + 1;
 
-            showRanking();
+                // Ordenar rankings
+                rankings.sort((a, b) => {
+                    if (b.score !== a.score) return b.score - a.score;
+                    return a.time - b.time;
+                });
+
+                // Salvar no Firebase
+                await set(rankingRef, rankings);
+                await set(stats2020Ref, bonus2020Stats);
+                await set(stats2021Ref, bonus2021Stats);
+
+                showRanking();
+            } catch (error) {
+                console.error('Error al guardar datos:', error);
+                alert('Hubo un error al guardar tu puntuación. Por favor, intenta nuevamente.');
+            }
         }
 
-        function showRanking() {
+        async function showRanking() {
             document.querySelector('.results-screen').classList.remove('active');
             document.querySelector('.ranking-screen').classList.add('active');
 
-            const rankings = JSON.parse(localStorage.getItem('oscarsRanking') || '[]');
-            const bonus2020Stats = JSON.parse(localStorage.getItem('bonus2020') || '{}');
-            const bonus2021Stats = JSON.parse(localStorage.getItem('bonus2021') || '{}');
+            try {
+                const { ref, get, database } = window.firebaseDB;
+                
+                // Referências do Firebase
+                const rankingRef = ref(database, 'ranking');
+                const stats2020Ref = ref(database, 'stats2020');
+                const stats2021Ref = ref(database, 'stats2021');
 
-            const tbody = document.getElementById('rankingBody');
-            tbody.innerHTML = '';
+                // Obter dados
+                const rankingSnapshot = await get(rankingRef);
+                const stats2020Snapshot = await get(stats2020Ref);
+                const stats2021Snapshot = await get(stats2021Ref);
 
-            rankings.slice(0, 10).forEach((player, index) => {
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td><strong>${index + 1}</strong></td>
-                    <td>${player.name}</td>
-                    <td>${player.score}</td>
-                    <td>${player.time}s</td>
-                `;
-            });
+                let rankings = rankingSnapshot.exists() ? rankingSnapshot.val() : [];
+                let bonus2020Stats = stats2020Snapshot.exists() ? stats2020Snapshot.val() : {};
+                let bonus2021Stats = stats2021Snapshot.exists() ? stats2021Snapshot.val() : {};
 
-            displayStats('stats2020', bonus2020Stats);
-            displayStats('stats2021', bonus2021Stats);
+                const tbody = document.getElementById('rankingBody');
+                tbody.innerHTML = '';
+
+                if (rankings.length === 0) {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `<td colspan="4" style="text-align: center; padding: 20px;">No hay jugadores aún. ¡Sé el primero!</td>`;
+                } else {
+                    rankings.slice(0, 10).forEach((player, index) => {
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td><strong>${index + 1}</strong></td>
+                            <td>${player.name}</td>
+                            <td>${player.score}</td>
+                            <td>${player.time}s</td>
+                        `;
+                    });
+                }
+
+                displayStats('stats2020', bonus2020Stats);
+                displayStats('stats2021', bonus2021Stats);
+            } catch (error) {
+                console.error('Error al cargar ranking:', error);
+                document.getElementById('rankingBody').innerHTML = 
+                    '<tr><td colspan="4" style="text-align: center; padding: 20px;">Error al cargar el ranking</td></tr>';
+            }
         }
 
         function displayStats(elementId, stats) {
@@ -825,6 +971,60 @@
         function resetGame() {
             location.reload();
         }
+
+        function showPasswordPrompt() {
+            document.getElementById('passwordModal').classList.add('active');
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminPassword').focus();
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('active');
+        }
+
+        function verifyPassword() {
+            const inputPassword = document.getElementById('adminPassword').value;
+            
+            if (inputPassword === ADMIN_PASSWORD) {
+                closePasswordModal();
+                confirmClearRanking();
+            } else {
+                alert('❌ Contraseña incorrecta');
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
+            }
+        }
+
+        async function confirmClearRanking() {
+            if (confirm('⚠️ ¿Estás seguro de que quieres ELIMINAR TODO el ranking?\n\nEsta acción NO se puede deshacer.\n\nSe borrarán:\n- Todos los jugadores\n- Todas las puntuaciones\n- Todas las estadísticas\n\n¿Continuar?')) {
+                try {
+                    const { ref, remove, database } = window.firebaseDB;
+                    
+                    // Remover dados do Firebase
+                    await remove(ref(database, 'ranking'));
+                    await remove(ref(database, 'stats2020'));
+                    await remove(ref(database, 'stats2021'));
+                    
+                    alert('✅ Ranking limpiado exitosamente');
+                    location.reload();
+                } catch (error) {
+                    console.error('Error al limpiar ranking:', error);
+                    alert('❌ Hubo un error al limpiar el ranking');
+                }
+            }
+        }
+
+        // Permitir pressionar Enter no modal de senha
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('adminPassword');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        verifyPassword();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
