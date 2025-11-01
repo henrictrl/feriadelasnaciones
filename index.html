@@ -264,6 +264,27 @@
             }
         }
 
+        .question-image-container {
+            text-align: center;
+            margin: 15px auto 20px;
+            max-width: 100%;
+        }
+
+        .question-main-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-height: 250px;
+            object-fit: cover;
+        }
+
+        @media (min-width: 768px) {
+            .question-main-image {
+                max-height: 350px;
+            }
+        }
+
         .options {
             display: grid;
             grid-template-columns: 1fr;
@@ -338,6 +359,27 @@
             .option-text {
                 padding: 12px;
                 font-size: 14px;
+            }
+        }
+
+        .option-text-only {
+            padding: 20px 15px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+            line-height: 1.4;
+        }
+
+        @media (min-width: 768px) {
+            .option-text-only {
+                padding: 25px 20px;
+                font-size: 15px;
+                min-height: 100px;
             }
         }
 
@@ -637,6 +679,9 @@
                 <div class="question-container">
                     <div class="question-number">Pregunta <span id="questionNum">1</span> de 10</div>
                     <div class="question" id="question"></div>
+                    <div class="question-image-container" id="questionImageContainer">
+                        <img id="questionImage" class="question-main-image" alt="Question image">
+                    </div>
                     <div class="options" id="options"></div>
                 </div>
                 
@@ -651,27 +696,13 @@
             <div class="content">
                 <div class="results-summary">
                     <h3>¡Resultados!</h3>
-                    <p><strong>Respuestas correctas:</strong> <span id="correctAnswers">0</span> de 10</p>
+                    <p><strong>Respuestas correctas:</strong> <span id="correctAnswers">0</span> de 9</p>
                     <p><strong>Tiempo total:</strong> <span id="totalTime">0</span> segundos</p>
                     <p><strong>Puntuación final:</strong> <span id="finalScore">0</span> puntos</p>
                 </div>
 
-                <div class="bonus-section">
-                    <h3>Preguntas Bonus:</h3>
-                    
-                    <div class="bonus-question">
-                        <label>¿Qué película te hubiera gustado que ganara el Oscar 2020?</label>
-                        <div class="bonus-options" id="bonus2020Options"></div>
-                    </div>
-
-                    <div class="bonus-question">
-                        <label>¿Qué película te hubiera gustado que ganara el Oscar 2021?</label>
-                        <div class="bonus-options" id="bonus2021Options"></div>
-                    </div>
-                </div>
-
                 <div class="center-btn">
-                    <button class="btn" onclick="submitBonus()">Enviar y Ver Ranking</button>
+                    <button class="btn" onclick="submitResults()">Ver Ranking</button>
                 </div>
             </div>
         </div>
@@ -695,12 +726,8 @@
 
                 <div class="stats">
                     <div class="stat-card">
-                        <h4>Preferencias Oscar 2020:</h4>
-                        <div id="stats2020"></div>
-                    </div>
-                    <div class="stat-card">
-                        <h4>Preferencias Oscar 2021:</h4>
-                        <div id="stats2021"></div>
+                        <h4>Películas Favoritas:</h4>
+                        <div id="statsFavorites"></div>
                     </div>
                 </div>
 
@@ -752,119 +779,109 @@
     <script>
         const ADMIN_PASSWORD = "oscar2024";
 
-        const movies2020 = [
-            "Ford vs Ferrari",
-            "El irlandés",
-            "Jojo Rabbit",
-            "Joker",
-            "Mujercitas",
-            "Historia de un matrimonio",
-            "1917",
-            "Érase una vez en Hollywood",
-            "Parásitos"
-        ];
-
-        const movies2021 = [
-            "El padre",
-            "Judas y el Mesías Negro",
-            "Mank",
-            "Minari",
-            "Nomadland",
-            "Una joven prometedora",
-            "Sound of Metal",
-            "El juicio de los 7 de Chicago"
-        ];
-
         const questions = [
             {
-                question: "¿Qué película ganó el Oscar a Mejor Película en 2020?",
+                question: "¿Qué característica histórica tuvo la ceremonia del Oscar 2020?",
+                image: "./images/oscar-ceremony.jpg",
                 options: [
-                    { text: "1917", image: "./images/1917.jpg" },
-                    { text: "Parásitos", image: "./images/parasitos.jpg" },
-                    { text: "Joker", image: "./images/joker.jpg" }
-                ],
-                correct: 1
-            },
-            {
-                question: "¿Quién ganó el Oscar al Mejor Actor en 2020?",
-                options: [
-                    { text: "Leonardo DiCaprio", image: "./images/leonardo-dicaprio.jpg" },
-                    { text: "Antonio Banderas", image: "./images/antonio-banderas.jpg" },
-                    { text: "Joaquin Phoenix", image: "./images/joaquin-phoenix.jpg" }
-                ],
-                correct: 2
-            },
-            {
-                question: "¿Qué película ganó el Oscar a Mejor Película en 2021?",
-                options: [
-                    { text: "El padre", image: "./images/el-padre.jpg" },
-                    { text: "Nomadland", image: "./images/nomadland.jpg" },
-                    { text: "Minari", image: "./images/minari.jpg" }
-                ],
-                correct: 1
-            },
-            {
-                question: "¿Quién dirigió 'Nomadland', ganadora del Oscar 2021?",
-                options: [
-                    { text: "Chloé Zhao", image: "./images/chloe-zhao.jpg" },
-                    { text: "Greta Gerwig", image: "./images/greta-gerwig.jpg" },
-                    { text: "Emerald Fennell", image: "./images/emerald-fennell.jpg" }
+                    { text: "Por primera vez en 92 años, una película de habla no inglesa ganó Mejor Película" },
+                    { text: "Fue la ceremonia más corta de la historia" },
+                    { text: "Tuvo el mayor número de presentaciones musicales" }
                 ],
                 correct: 0
             },
             {
-                question: "¿Qué actor español fue nominado al Oscar 2020?",
+                question: "¿Cómo afectó la pandemia de COVID-19 a la ceremonia del Oscar 2021?",
+                image: "./images/oscar-2021.jpg",
                 options: [
-                    { text: "Javier Bardem", image: "./images/javier-bardem.jpg" },
-                    { text: "Antonio Banderas", image: "./images/antonio-banderas-nominado.jpg" },
-                    { text: "Penélope Cruz", image: "./images/penelope-cruz.jpg" }
+                    { text: "Se realizó completamente virtual desde casa" },
+                    { text: "Se pospuso dos meses y se realizó en Union Station" },
+                    { text: "Se canceló por primera vez en la historia" }
                 ],
                 correct: 1
             },
             {
-                question: "¿Quién ganó Mejor Actriz en 2020 por 'Judy'?",
+                question: "¿Cuántos Oscars ganó 'Parasita' en total?",
+                image: "./images/parasitos.jpg",
                 options: [
-                    { text: "Charlize Theron", image: "./images/charlize-theron.jpg" },
-                    { text: "Renée Zellweger", image: "./images/renee-zellweger.jpg" },
-                    { text: "Scarlett Johansson", image: "./images/scarlett-johansson.jpg" }
+                    { text: "Tres Oscars" },
+                    { text: "Cuatro Oscars" },
+                    { text: "Cinco Oscars" }
                 ],
                 correct: 1
             },
             {
-                question: "¿Cuántas nominaciones tuvo 'Joker' en 2020?",
+                question: "¿Cuánto peso perdió Joaquin Phoenix para interpretar al Joker?",
+                image: "./images/joker.jpg",
                 options: [
-                    { text: "9 nominaciones", image: "./images/joker-9.jpg" },
-                    { text: "8 nominaciones", image: "./images/joker-8.jpg" },
-                    { text: "11 nominaciones", image: "./images/joker-11.jpg" }
+                    { text: "15 kilogramos" },
+                    { text: "23 kilogramos" },
+                    { text: "28 kilogramos" }
                 ],
-                correct: 2
+                correct: 1
             },
             {
-                question: "¿Quién ganó Mejor Actor en 2021 por 'El padre'?",
+                question: "¿Qué técnica cinematográfica especial utilizó la película '1917'?",
+                image: "./images/1917.jpg",
                 options: [
-                    { text: "Gary Oldman", image: "./images/gary-oldman.jpg" },
-                    { text: "Chadwick Boseman", image: "./images/chadwick-boseman.jpg" },
-                    { text: "Anthony Hopkins", image: "./images/anthony-hopkins.jpg" }
+                    { text: "Fue filmada completamente en blanco y negro" },
+                    { text: "Fue filmada para parecer una sola toma continua" },
+                    { text: "Fue la primera película filmada en 3D" }
                 ],
-                correct: 2
+                correct: 1
             },
             {
-                question: "¿Qué película de animación ganó el Oscar 2021?",
+                question: "¿Por cuál película Brad Pitt ganó su primer Oscar de actuación después de más de 30 años de carrera?",
+                image: "./images/brad-pitt.jpg",
                 options: [
-                    { text: "Wolfwalkers", image: "./images/wolfwalkers.jpg" },
+                    { text: "El Club de la Pelea" },
+                    { text: "Érase una vez en Hollywood" },
+                    { text: "El Curioso Caso de Benjamin Button" }
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué récord histórico estableció Chloé Zhao al ganar el Oscar a Mejor Dirección por 'Nomadland'?",
+                image: "./images/nomadland.jpg",
+                options: [
+                    { text: "Fue la directora más joven en ganar" },
+                    { text: "Fue la primera mujer asiática en ganar Mejor Dirección" },
+                    { text: "Fue la primera directora independiente en ganar" }
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué edad tenía Anthony Hopkins cuando ganó el Oscar por 'El Padre'?",
+                image: "./images/el-padre.jpg",
+                options: [
+                    { text: "78 años" },
+                    { text: "83 años" },
+                    { text: "85 años" }
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué logro histórico alcanzó 'Soul' de Pixar?",
+                image: "./images/soul.jpg",
+                options: [
+                    { text: "Fue la película animada más taquillera" },
+                    { text: "Fue la primera película de Pixar con protagonista afroamericano" },
+                    { text: "Fue la primera película de Pixar en español" }
+                ],
+                correct: 1
+            },
+            {
+                question: "Entre todas las películas mencionadas, ¿cuál es tu favorita?",
+                image: "./images/oscar-movies.jpg",
+                options: [
+                    { text: "Parasita", image: "./images/parasitos.jpg" },
+                    { text: "Joker", image: "./images/joker.jpg" },
+                    { text: "1917", image: "./images/1917.jpg" },
+                    { text: "Nomadland", image: "./images/nomadland.jpg" },
                     { text: "Soul", image: "./images/soul.jpg" },
-                    { text: "Onward", image: "./images/onward.jpg" }
+                    { text: "Érase una vez en Hollywood", image: "./images/erase-una-vez.jpg" }
                 ],
-                correct: 1
-            },
-            {
-                question: "¿Qué película ganó Mejor Película Internacional 2021?",
-                options: [
-                    { text: "El agente topo", image: "./images/agente-topo.jpg" },
-                    { text: "Minari", image: "./images/minari-internacional.jpg" },
-                    { text: "Otra ronda", image: "./images/otra-ronda.jpg" }
-                ],
-                correct: 2
+                correct: 0
             }
         ];
 
@@ -874,8 +891,7 @@
         let timerInterval;
         let playerName = "";
         let correctCount = 0;
-        let selectedBonus2020 = "";
-        let selectedBonus2021 = "";
+        let selectedFavorite = "";
 
         async function loadMiniRanking() {
             try {
@@ -902,42 +918,6 @@
             } catch (error) {
                 console.error('Error al cargar ranking:', error);
             }
-        }
-
-        function createBonusOptions() {
-            const bonus2020Div = document.getElementById('bonus2020Options');
-            const bonus2021Div = document.getElementById('bonus2021Options');
-            
-            bonus2020Div.innerHTML = '';
-            bonus2021Div.innerHTML = '';
-            
-            movies2020.forEach(movie => {
-                const btn = document.createElement('div');
-                btn.className = 'bonus-btn';
-                btn.textContent = movie;
-                btn.onclick = () => selectBonus2020(movie, btn);
-                bonus2020Div.appendChild(btn);
-            });
-            
-            movies2021.forEach(movie => {
-                const btn = document.createElement('div');
-                btn.className = 'bonus-btn';
-                btn.textContent = movie;
-                btn.onclick = () => selectBonus2021(movie, btn);
-                bonus2021Div.appendChild(btn);
-            });
-        }
-
-        function selectBonus2020(movie, btn) {
-            document.querySelectorAll('#bonus2020Options .bonus-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            selectedBonus2020 = movie;
-        }
-
-        function selectBonus2021(movie, btn) {
-            document.querySelectorAll('#bonus2021Options .bonus-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            selectedBonus2021 = movie;
         }
 
         function startGame() {
@@ -970,25 +950,50 @@
             document.getElementById('questionNum').textContent = currentQuestion + 1;
             document.getElementById('question').textContent = q.question;
             
+            // Mostrar imagem principal da questão
+            const questionImage = document.getElementById('questionImage');
+            const questionImageContainer = document.getElementById('questionImageContainer');
+            
+            if (q.image) {
+                questionImage.src = q.image;
+                questionImage.alt = q.question;
+                questionImageContainer.style.display = 'block';
+            } else {
+                questionImageContainer.style.display = 'none';
+            }
+            
             const optionsDiv = document.getElementById('options');
             optionsDiv.innerHTML = '';
+            
+            // Questão 10 (índice 9) usa imagens nas opções
+            const useImageOptions = (currentQuestion === 9);
             
             q.options.forEach((option, index) => {
                 const optionDiv = document.createElement('div');
                 optionDiv.className = 'option';
                 optionDiv.onclick = () => selectOption(index);
                 
-                const img = document.createElement('img');
-                img.src = option.image;
-                img.alt = option.text;
-                img.className = 'option-image';
+                if (useImageOptions && option.image) {
+                    // Questão 10: mostrar imagem + texto
+                    const img = document.createElement('img');
+                    img.src = option.image;
+                    img.alt = option.text;
+                    img.className = 'option-image';
+                    
+                    const text = document.createElement('div');
+                    text.className = 'option-text';
+                    text.textContent = option.text;
+                    
+                    optionDiv.appendChild(img);
+                    optionDiv.appendChild(text);
+                } else {
+                    // Questões 1-9: apenas texto
+                    const text = document.createElement('div');
+                    text.className = 'option-text-only';
+                    text.textContent = option.text;
+                    optionDiv.appendChild(text);
+                }
                 
-                const text = document.createElement('div');
-                text.className = 'option-text';
-                text.textContent = option.text;
-                
-                optionDiv.appendChild(img);
-                optionDiv.appendChild(text);
                 optionsDiv.appendChild(optionDiv);
             });
 
@@ -999,19 +1004,34 @@
             const q = questions[currentQuestion];
             const options = document.querySelectorAll('.option');
             
-            options.forEach((opt, idx) => {
-                opt.onclick = null;
-                if (idx === q.correct) {
-                    opt.classList.add('correct');
-                } else if (idx === selected) {
-                    opt.classList.add('incorrect');
-                }
-            });
+            // Questão 10 (índice 9) é a preferência de filme favorito
+            if (currentQuestion === 9) {
+                // Guardar a preferência do usuário
+                selectedFavorite = q.options[selected].text;
+                
+                // Apenas destacar a opção selecionada, sem marcar como certa ou errada
+                options.forEach((opt, idx) => {
+                    opt.onclick = null;
+                    if (idx === selected) {
+                        opt.classList.add('correct'); // Usa a classe correct apenas para visual
+                    }
+                });
+            } else {
+                // Para as outras questões, comportamento normal
+                options.forEach((opt, idx) => {
+                    opt.onclick = null;
+                    if (idx === q.correct) {
+                        opt.classList.add('correct');
+                    } else if (idx === selected) {
+                        opt.classList.add('incorrect');
+                    }
+                });
 
-            if (selected === q.correct) {
-                correctCount++;
-                const timeBonus = Math.max(0, 100 - Math.floor((Date.now() - startTime) / 1000));
-                score += 100 + timeBonus;
+                if (selected === q.correct) {
+                    correctCount++;
+                    const timeBonus = Math.max(0, 100 - Math.floor((Date.now() - startTime) / 1000));
+                    score += 100 + timeBonus;
+                }
             }
 
             document.getElementById('currentScore').textContent = score;
@@ -1038,13 +1058,11 @@
             document.getElementById('correctAnswers').textContent = correctCount;
             document.getElementById('totalTime').textContent = totalTime;
             document.getElementById('finalScore').textContent = score;
-            
-            createBonusOptions();
         }
 
-        async function submitBonus() {
-            if (!selectedBonus2020 || !selectedBonus2021) {
-                alert('Por favor, selecciona tus películas favoritas de ambos años');
+        async function submitResults() {
+            if (!selectedFavorite) {
+                alert('Hubo un error al registrar tu película favorita. Por favor, intenta de nuevo.');
                 return;
             }
 
@@ -1054,16 +1072,13 @@
                 const { ref, get, set, database } = window.firebaseDB;
                 
                 const rankingRef = ref(database, 'ranking');
-                const stats2020Ref = ref(database, 'stats2020');
-                const stats2021Ref = ref(database, 'stats2021');
+                const favoriteMoviesRef = ref(database, 'favoriteMovies');
 
                 const rankingSnapshot = await get(rankingRef);
-                const stats2020Snapshot = await get(stats2020Ref);
-                const stats2021Snapshot = await get(stats2021Ref);
+                const favoriteMoviesSnapshot = await get(favoriteMoviesRef);
 
                 let rankings = rankingSnapshot.exists() ? rankingSnapshot.val() : [];
-                let bonus2020Stats = stats2020Snapshot.exists() ? stats2020Snapshot.val() : {};
-                let bonus2021Stats = stats2021Snapshot.exists() ? stats2021Snapshot.val() : {};
+                let favoriteMoviesStats = favoriteMoviesSnapshot.exists() ? favoriteMoviesSnapshot.val() : {};
 
                 rankings.push({
                     name: playerName,
@@ -1073,8 +1088,7 @@
                     date: new Date().toISOString()
                 });
 
-                bonus2020Stats[selectedBonus2020] = (bonus2020Stats[selectedBonus2020] || 0) + 1;
-                bonus2021Stats[selectedBonus2021] = (bonus2021Stats[selectedBonus2021] || 0) + 1;
+                favoriteMoviesStats[selectedFavorite] = (favoriteMoviesStats[selectedFavorite] || 0) + 1;
 
                 rankings.sort((a, b) => {
                     if (b.score !== a.score) return b.score - a.score;
@@ -1082,8 +1096,7 @@
                 });
 
                 await set(rankingRef, rankings);
-                await set(stats2020Ref, bonus2020Stats);
-                await set(stats2021Ref, bonus2021Stats);
+                await set(favoriteMoviesRef, favoriteMoviesStats);
 
                 showRanking();
             } catch (error) {
@@ -1100,16 +1113,13 @@
                 const { ref, get, database } = window.firebaseDB;
                 
                 const rankingRef = ref(database, 'ranking');
-                const stats2020Ref = ref(database, 'stats2020');
-                const stats2021Ref = ref(database, 'stats2021');
+                const favoriteMoviesRef = ref(database, 'favoriteMovies');
 
                 const rankingSnapshot = await get(rankingRef);
-                const stats2020Snapshot = await get(stats2020Ref);
-                const stats2021Snapshot = await get(stats2021Ref);
+                const favoriteMoviesSnapshot = await get(favoriteMoviesRef);
 
                 let rankings = rankingSnapshot.exists() ? rankingSnapshot.val() : [];
-                let bonus2020Stats = stats2020Snapshot.exists() ? stats2020Snapshot.val() : {};
-                let bonus2021Stats = stats2021Snapshot.exists() ? stats2021Snapshot.val() : {};
+                let favoriteMoviesStats = favoriteMoviesSnapshot.exists() ? favoriteMoviesSnapshot.val() : {};
 
                 const tbody = document.getElementById('rankingBody');
                 tbody.innerHTML = '';
@@ -1129,8 +1139,7 @@
                     });
                 }
 
-                displayStats('stats2020', bonus2020Stats);
-                displayStats('stats2021', bonus2021Stats);
+                displayStats('statsFavorites', favoriteMoviesStats);
             } catch (error) {
                 console.error('Error al cargar ranking:', error);
                 document.getElementById('rankingBody').innerHTML = 
@@ -1188,8 +1197,7 @@
                     const { ref, remove, database } = window.firebaseDB;
                     
                     await remove(ref(database, 'ranking'));
-                    await remove(ref(database, 'stats2020'));
-                    await remove(ref(database, 'stats2021'));
+                    await remove(ref(database, 'favoriteMovies'));
                     
                     alert('✅ Ranking limpiado');
                     location.reload();
