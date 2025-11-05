@@ -6,958 +6,452 @@
     <title>Quiz Oscar 2020-2021 - Feria de las Naciones</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* --- Reset e Configuração Base --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html, body {
-            height: 100%;
-            overflow: hidden;
+        :root {
+            --color-red: #dc143c;
+            --color-red-dark: #b21031;
+            --color-yellow: #ffd700;
+            --color-dark: #333;
+            --color-light: #fafafa;
+            --color-grey: #e0e0e0;
+            --color-border: #ccc;
+            --color-success: #228b22;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: #dc143c;
-            position: relative;
+            background-color: var(--color-light);
+            color: var(--color-dark);
+            line-height: 1.6;
+            font-size: 16px;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image:
-                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(220, 20, 60, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
+        /* --- Layout Principal --- */
         .container {
-            background: #fafafa;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            position: relative;
-            z-index: 1;
+            background-color: var(--color-red-dark);
+            border-left: 1px solid var(--color-grey);
+            border-right: 1px solid var(--color-grey);
         }
 
         .header {
             text-align: center;
-            padding: 10px 15px;
-            background: #dc143c;
+            padding: 15px;
+            background: var(--color-red);
             color: white;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
         }
 
         .header h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.3em;
-            margin-bottom: 3px;
-            text-shadow: 2px 2px 8px rgba(255, 215, 0, 0.3);
+            font-size: 1.5rem;
             font-weight: 900;
-            letter-spacing: 1px;
-            position: relative;
-            z-index: 1;
         }
 
         .header h2 {
-            font-size: 0.75em;
+            font-size: 0.9rem;
             font-weight: 300;
-            opacity: 0.95;
-            letter-spacing: 0.5px;
-            position: relative;
-            z-index: 1;
-        }
-
-        @media (min-width: 768px) {
-            .header {
-                padding: 12px 20px;
-            }
-
-            .header h1 {
-                font-size: 1.6em;
-                margin-bottom: 4px;
-            }
-
-            .header h2 {
-                font-size: 0.85em;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .header h2 {
-                font-size: 0.9em;
-            }
         }
 
         .content {
             flex: 1;
-            overflow: hidden;
-            padding: 10px 15px;
-            background: #fafafa;
-            display: flex;
-            flex-direction: column;
+            overflow-y: auto;
+            padding: 20px;
         }
 
-        @media (min-width: 768px) {
-            .content {
-                padding: 12px 20px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .content {
-                padding: 15px 25px;
-            }
-        }
-
+        /* --- Visibilidade das Telas --- */
         .welcome-screen, .game-screen, .results-screen, .ranking-screen {
             display: none;
+            flex-direction: column;
             height: 100%;
         }
 
         .welcome-screen.active, .game-screen.active, .results-screen.active, .ranking-screen.active {
             display: flex;
-            flex-direction: column;
         }
 
+        /* --- Tela de Boas-Vindas --- */
         .welcome-content {
-            display: grid;
-            gap: 10px;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            height: 100%;
-        }
-
-        @media (min-width: 768px) {
-            .welcome-content {
-                grid-template-columns: 1fr 1fr;
-                gap: 15px;
-            }
-        }
-
-        .welcome-left {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .welcome-start-card,
+        .welcome-ranking-card,
+        .welcome-stats-card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--color-border);
+        }
+
+        .welcome-ranking-card h3 {
+            color: var(--color-red);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+        }
+
+        .welcome-stats-card h4 {
+            color: var(--color-red);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+            text-align: center;
         }
 
         .image-container {
             width: 100%;
             text-align: center;
+            margin-bottom: 15px;
         }
 
         .cover-image {
             max-width: 100%;
             height: auto;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            max-height: 150px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 2px solid #ffd700;
-        }
-
-        .cover-image:hover {
-            transform: scale(1.02);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-        }
-
-        @media (min-width: 768px) {
-            .cover-image {
-                max-height: 200px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .cover-image {
-                max-height: 220px;
-            }
-        }
-
-        .input-group {
-            margin: 5px 0;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 2px solid var(--color-yellow);
         }
 
         .input-group label {
             display: block;
             margin-bottom: 5px;
-            color: #dc143c;
+            color: var(--color-red);
             font-weight: 600;
-            font-size: 13px;
-            letter-spacing: 0.3px;
+            font-size: 0.9rem;
         }
 
         .input-group input {
             width: 100%;
-            padding: 10px 12px;
-            border: 2px solid #ffd700;
+            padding: 12px;
+            border: 2px solid var(--color-border);
             border-radius: 8px;
-            font-size: 14px;
-            background: white;
-            transition: all 0.3s ease;
+            font-size: 1rem;
             font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s ease;
         }
 
         .input-group input:focus {
             outline: none;
-            border-color: #dc143c;
-            box-shadow: 0 0 0 2px rgba(220, 20, 60, 0.2);
-            transform: translateY(-1px);
+            border-color: var(--color-red);
         }
 
-        @media (min-width: 768px) {
-            .input-group input {
-                padding: 12px 14px;
-                font-size: 15px;
-            }
-        }
-
+        /* --- Elementos Comuns (Botões, etc.) --- */
         .btn {
-            background: #ffd700;
-            color: #000;
+            background: var(--color-yellow);
+            color: var(--color-dark);
             border: none;
-            padding: 10px 20px;
-            font-size: 14px;
+            padding: 12px 20px;
+            font-size: 1rem;
             font-weight: 600;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background-color 0.3s ease;
             display: inline-block;
-            margin: 3px;
             width: 100%;
-            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
             font-family: 'Poppins', sans-serif;
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        @media (min-width: 768px) {
-            .btn {
-                padding: 12px 24px;
-                font-size: 15px;
-            }
+            text-align: center;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
             background: #ffed4e;
-        }
-
-        .btn:active {
-            transform: translateY(-1px);
         }
 
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
+            background: var(--color-yellow);
         }
 
-        .btn:disabled:hover {
-            transform: none;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-        }
-
-        .mini-ranking {
-            background: white;
-            border-radius: 10px;
-            padding: 12px;
-            border: 2px solid #dc143c;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .center-btn {
+            text-align: center;
+            margin-top: 10px;
             display: flex;
             flex-direction: column;
-            height: 100%;
+            gap: 10px;
         }
 
-        .mini-ranking:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(220, 20, 60, 0.2);
-        }
-
-        .mini-ranking h3 {
-            color: #dc143c;
-            margin-bottom: 8px;
-            font-size: 1em;
-            font-weight: 700;
-            font-family: 'Playfair Display', serif;
+        /* --- Tela do Jogo --- */
+        .timer, .score-display {
             text-align: center;
-            letter-spacing: 0.5px;
-        }
-
-        @media (min-width: 768px) {
-            .mini-ranking h3 {
-                font-size: 1.1em;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .mini-ranking h3 {
-                font-size: 1.2em;
-            }
-        }
-
-        .mini-ranking-table {
-            width: 100%;
-            font-size: 11px;
-        }
-
-        @media (min-width: 768px) {
-            .mini-ranking-table {
-                font-size: 12px;
-            }
-        }
-
-        .mini-ranking-table td {
-            padding: 3px 5px;
-            border-bottom: 1px solid #ffebcd;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
         }
 
         .timer {
-            text-align: center;
-            font-size: 0.95em;
-            color: #000;
-            margin: 8px 0;
-            font-weight: 700;
-            background: #ffd700;
-            padding: 8px 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-            display: inline-block;
-            width: auto;
-            min-width: 120px;
+            color: var(--color-dark);
+            background: var(--color-yellow);
         }
 
-        @media (min-width: 768px) {
-            .timer {
-                font-size: 1em;
-                padding: 10px 18px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .timer {
-                font-size: 1.1em;
-            }
+        .score-display {
+            color: var(--color-red);
+            background: var(--color-light);
+            border: 2px solid var(--color-yellow);
         }
 
         .question-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+            margin-bottom: 20px;
         }
 
         .question-number {
-            color: #dc143c;
+            color: #f0f0f0;
             font-weight: bold;
             margin-bottom: 5px;
-            font-size: 12px;
-        }
-
-        @media (min-width: 768px) {
-            .question-number {
-                font-size: 13px;
-            }
+            font-size: 0.9rem;
         }
 
         .question {
-            font-size: 0.95em;
-            color: #000;
-            margin-bottom: 8px;
+            font-size: 1.1rem;
+            color: var(--color-dark);
+            margin-bottom: 15px;
             font-weight: 600;
             line-height: 1.4;
             text-align: center;
-            background: white;
-            padding: 10px 12px;
+            background: #ffffff;
+            padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            border-left: 3px solid #dc143c;
-        }
-
-        @media (min-width: 768px) {
-            .question {
-                font-size: 1em;
-                padding: 12px 15px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .question {
-                font-size: 1.05em;
-                padding: 14px 18px;
-            }
+            border-left: 4px solid var(--color-red);
         }
 
         .question-image-container {
             text-align: center;
-            margin: 8px auto;
-            max-width: 100%;
+            margin-bottom: 15px;
         }
 
         .question-main-image {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            max-height: 120px;
+            max-height: 180px;
             object-fit: cover;
-            border: 2px solid #ffd700;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .question-main-image:hover {
-            transform: scale(1.02);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
-        }
-
-        @media (min-width: 768px) {
-            .question-main-image {
-                max-height: 150px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .question-main-image {
-                max-height: 180px;
-            }
+            border: 2px solid var(--color-yellow);
         }
 
         .options {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 8px;
-            flex: 1;
-        }
-
-        @media (min-width: 768px) {
-            .options {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .options {
-                gap: 12px;
-            }
+            gap: 10px;
         }
 
         .option {
-            background: white;
-            border: 2px solid #ffd700;
-            border-radius: 10px;
+            background: #ffffff;
+            border: 2px solid var(--color-yellow);
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             position: relative;
-        }
-
-        .option::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 215, 0, 0.1);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .option:hover::before {
-            opacity: 1;
         }
 
         .option:hover {
-            border-color: #dc143c;
-            transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.3);
-        }
-
-        .option.selected {
-            border-color: #ffd700;
+            border-color: var(--color-red);
             background: #fffef0;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
         }
 
+        /* --- FEEDBACK VISUAL MELHORADO --- */
         .option.correct {
-            border-color: #228b22;
+            border-color: var(--color-success);
             background: #f0fff0;
-            box-shadow: 0 4px 15px rgba(34, 139, 34, 0.3);
-            animation: correctPulse 0.5s ease;
-        }
-
-        @keyframes correctPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.03); }
+            border-width: 3px;
         }
 
         .option.incorrect {
-            border-color: #dc143c;
+            border-color: var(--color-red);
             background: #fff5f5;
-            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.3);
-            animation: incorrectShake 0.5s ease;
+            border-width: 3px;
         }
 
-        @keyframes incorrectShake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
+        .option.selected {
+            border-color: var(--color-red);
+            background: #fffef0;
+            border-width: 3px;
         }
+
+        .option.correct::after,
+        .option.incorrect::after {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            z-index: 2;
+        }
+
+        .option.correct::after {
+            content: 'Correto ✓';
+            background: var(--color-success);
+        }
+
+        .option.incorrect::after {
+            content: 'Errado ✗';
+            background: var(--color-red);
+        }
+
+        .options.answered .option:not(.correct):not(.incorrect) {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        /* --- FIM DO FEEDBACK VISUAL --- */
 
         .option-image {
             width: 100%;
-            height: 80px;
+            height: 100px;
             object-fit: cover;
-            background: #f9f9f9;
-            padding: 6px;
-            transition: transform 0.3s ease;
-        }
-
-        @media (min-width: 768px) {
-            .option-image {
-                height: 100px;
-                padding: 8px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .option-image {
-                height: 110px;
-            }
-        }
-
-        .option:hover .option-image {
-            transform: scale(1.05);
+            background: var(--color-light);
+            display: block;
         }
 
         .option-text {
-            padding: 6px 8px;
+            padding: 10px;
             text-align: center;
             font-weight: 600;
-            color: #000;
-            font-size: 11px;
-            background: rgba(255, 215, 0, 0.05);
-            position: relative;
-            z-index: 1;
-        }
-
-        @media (min-width: 768px) {
-            .option-text {
-                padding: 8px 10px;
-                font-size: 12px;
-            }
+            color: var(--color-dark);
+            font-size: 0.9rem;
         }
 
         .option-text-only {
-            padding: 12px 10px;
+            padding: 15px;
             text-align: center;
             font-weight: 600;
-            color: #000;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 60px;
+            color: var(--color-dark);
+            font-size: 1rem;
             line-height: 1.4;
-            position: relative;
-            z-index: 1;
         }
 
-        @media (min-width: 768px) {
-            .option-text-only {
-                padding: 14px 12px;
-                font-size: 13px;
-                min-height: 70px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .option-text-only {
-                padding: 16px 14px;
-                font-size: 14px;
-                min-height: 75px;
-            }
-        }
-
-        .score-display {
-            text-align: center;
-            font-size: 0.95em;
-            margin: 8px 0;
-            font-weight: 700;
-            color: #dc143c;
-            background: white;
-            padding: 8px 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            display: inline-block;
-        }
-
-        @media (min-width: 768px) {
-            .score-display {
-                font-size: 1em;
-                padding: 10px 18px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .score-display {
-                font-size: 1.05em;
-            }
-        }
-
+        /* --- Tela de Resultados --- */
         .results-summary {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
             margin: 10px 0;
-            border: 2px solid #dc143c;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid var(--color-red);
         }
 
         .results-summary h3 {
-            color: #dc143c;
-            margin-bottom: 12px;
-            font-size: 1.1em;
+            color: var(--color-red);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
             font-family: 'Playfair Display', serif;
             font-weight: 700;
             text-align: center;
         }
 
         .results-summary p {
-            margin: 8px 0;
-            font-size: 13px;
-            padding: 8px;
-            background: #fffef0;
-            border-radius: 6px;
-            border-left: 3px solid #ffd700;
-        }
-
-        @media (min-width: 768px) {
-            .results-summary {
-                padding: 18px;
-            }
-
-            .results-summary h3 {
-                font-size: 1.2em;
-            }
-
-            .results-summary p {
-                font-size: 14px;
-            }
-        }
-
-        .bonus-section {
             margin: 10px 0;
-        }
-
-        .bonus-section h3 {
-            color: #dc143c;
-            margin-bottom: 10px;
-            text-align: center;
-            font-size: 0.95em;
-        }
-
-        .bonus-question {
-            margin-bottom: 12px;
-        }
-
-        .bonus-question label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 6px;
-            color: #000;
-            font-size: 13px;
-        }
-
-        .bonus-options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-        }
-
-        @media (min-width: 768px) {
-            .bonus-options {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 8px;
-            }
-        }
-
-        .bonus-btn {
-            background: #f5f5f5;
-            border: 2px solid #ffd700;
-            padding: 8px 4px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 10px;
-            text-align: center;
-            font-weight: bold;
-            color: #000;
-        }
-
-        @media (min-width: 768px) {
-            .bonus-btn {
-                padding: 10px 6px;
-                font-size: 11px;
-            }
-        }
-
-        .bonus-btn:hover {
-            border-color: #dc143c;
+            font-size: 1rem;
+            padding: 10px;
             background: #fffef0;
+            border-radius: 6px;
+            border-left: 3px solid var(--color-yellow);
         }
 
-        .bonus-btn.selected {
-            background: #ffd700;
-            border-color: #dc143c;
-            color: #000;
+        /* --- Tela de Ranking --- */
+        .ranking-screen h3 {
+            text-align: center; 
+            color: var(--color-yellow);
+            margin-bottom: 15px; 
+            font-size: 1.3rem;
+            font-family: 'Playfair Display', serif;
         }
 
         .ranking-table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin: 10px 0;
-            font-size: 12px;
-            overflow: hidden;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9rem;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        @media (min-width: 768px) {
-            .ranking-table {
-                font-size: 13px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .ranking-table {
-                font-size: 14px;
-            }
+            overflow: hidden;
+            border: 1px solid var(--color-border);
         }
 
         .ranking-table th {
-            background: #dc143c;
+            background: var(--color-red);
             color: white;
-            padding: 8px 8px;
+            padding: 12px;
             text-align: left;
-            font-size: 12px;
             font-weight: 600;
-            letter-spacing: 0.3px;
-        }
-
-        @media (min-width: 768px) {
-            .ranking-table th {
-                padding: 10px 10px;
-                font-size: 13px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .ranking-table th {
-                padding: 12px 12px;
-                font-size: 14px;
-            }
         }
 
         .ranking-table td {
-            padding: 6px 8px;
-            border-bottom: 1px solid #ffebcd;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--color-grey);
             background: white;
-            transition: all 0.3s ease;
         }
-
-        @media (min-width: 768px) {
-            .ranking-table td {
-                padding: 8px 10px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .ranking-table td {
-                padding: 10px 12px;
-            }
-        }
-
-        .ranking-table tr:hover td {
-            background: #fffef0;
-            transform: scale(1.01);
-        }
-
+        
         .ranking-table tr:last-child td {
             border-bottom: none;
+        }
+
+        .ranking-table tr:nth-child(even) td {
+            background: var(--color-light);
         }
 
         .stats {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 10px;
-            margin: 10px 0;
-        }
-
-        @media (min-width: 768px) {
-            .stats {
-                grid-template-columns: 1fr 1fr;
-                gap: 12px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .stats {
-                gap: 15px;
-            }
+            gap: 15px;
+            margin: 15px 0;
         }
 
         .stat-card {
-            background: white;
-            padding: 12px;
-            border-radius: 10px;
-            border: 2px solid #ffd700;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2);
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid var(--color-yellow);
         }
 
         .stat-card h4 {
-            color: #dc143c;
+            color: var(--color-red);
             margin-bottom: 10px;
-            font-size: 1em;
+            font-size: 1.2rem;
             font-weight: 700;
             font-family: 'Playfair Display', serif;
             text-align: center;
-            letter-spacing: 0.3px;
-        }
-
-        @media (min-width: 768px) {
-            .stat-card h4 {
-                font-size: 1.05em;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .stat-card h4 {
-                font-size: 1.1em;
-            }
-        }
-
-        .stat-item {
-            margin: 3px 0;
-            padding: 3px;
-            background: #fffef0;
-            border-radius: 4px;
-            font-size: 10px;
-        }
-
-        @media (min-width: 768px) {
-            .stat-item {
-                font-size: 11px;
-            }
         }
 
         .movie-stat-item {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 8px;
-            margin: 6px 0;
+            padding: 10px;
+            margin: 8px 0;
             background: #fffef0;
             border-radius: 8px;
-            border: 2px solid #ffd700;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-        }
-
-        .movie-stat-item:hover {
-            border-color: #dc143c;
-            box-shadow: 0 3px 12px rgba(220, 20, 60, 0.2);
-            transform: translateX(3px);
+            border: 1px solid var(--color-yellow);
         }
 
         .movie-poster {
-            width: 40px;
-            height: 60px;
+            width: 45px;
+            height: 65px;
             object-fit: cover;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            border: 2px solid #ffd700;
-            transition: transform 0.3s ease;
-        }
-
-        .movie-stat-item:hover .movie-poster {
-            transform: scale(1.05);
-        }
-
-        @media (min-width: 768px) {
-            .movie-poster {
-                width: 50px;
-                height: 75px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .movie-poster {
-                width: 55px;
-                height: 82px;
-            }
+            border-radius: 4px;
+            border: 1px solid var(--color-yellow);
+            flex-shrink: 0;
         }
 
         .movie-info {
@@ -965,79 +459,36 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
+            min-width: 0;
         }
 
         .movie-title {
             font-weight: 700;
-            color: #dc143c;
-            font-size: 11px;
-            letter-spacing: 0.2px;
-        }
-
-        @media (min-width: 768px) {
-            .movie-title {
-                font-size: 12px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .movie-title {
-                font-size: 13px;
-            }
+            color: var(--color-red);
+            font-size: 1rem;
         }
 
         .movie-stats {
-            color: #666;
-            font-size: 10px;
+            color: #555;
+            font-size: 0.85rem;
             font-weight: 500;
-        }
-
-        @media (min-width: 768px) {
-            .movie-stats {
-                font-size: 11px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .movie-stats {
-                font-size: 12px;
-            }
         }
 
         .movie-bar {
             width: 100%;
-            height: 6px;
-            background: #e0e0e0;
-            border-radius: 6px;
+            height: 8px;
+            background: var(--color-grey);
+            border-radius: 8px;
             overflow: hidden;
             margin-top: 4px;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .movie-bar-fill {
             height: 100%;
-            background: #ffd700;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-            position: relative;
+            background: var(--color-yellow);
         }
 
-        .movie-bar-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        .center-btn {
-            text-align: center;
-            margin-top: 6px;
-        }
-
+        /* --- Modal de Senha --- */
         .password-modal {
             display: none;
             position: fixed;
@@ -1045,17 +496,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.7);
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            padding: 15px;
         }
 
         .password-modal.active {
@@ -1063,57 +508,47 @@
         }
 
         .password-content {
-            background: white;
+            background: #ffffff;
             padding: 25px;
-            border-radius: 15px;
+            border-radius: 8px;
             max-width: 400px;
-            width: 90%;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            border: 2px solid #dc143c;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            width: 100%;
+            border: 2px solid var(--color-red);
         }
 
         .password-content h3 {
-            color: #dc143c;
+            color: var(--color-red);
             margin-bottom: 15px;
             text-align: center;
-            font-size: 1.2em;
+            font-size: 1.3rem;
             font-family: 'Playfair Display', serif;
-            font-weight: 700;
+        }
+        
+        .password-content p {
+            margin-bottom: 12px; 
+            color: #666; 
+            font-size: 0.9rem;
         }
 
         .password-input {
             width: 100%;
-            padding: 12px 14px;
-            border: 2px solid #ffd700;
+            padding: 12px;
+            border: 2px solid var(--color-border);
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 1rem;
             margin-bottom: 15px;
             font-family: 'Poppins', sans-serif;
-            transition: all 0.3s ease;
         }
 
         .password-input:focus {
             outline: none;
-            border-color: #dc143c;
-            box-shadow: 0 0 0 2px rgba(220, 20, 60, 0.2);
+            border-color: var(--color-red);
         }
 
         .password-buttons {
             display: flex;
-            gap: 12px;
-            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .btn-cancel {
@@ -1125,121 +560,46 @@
             background: #5a6268;
         }
 
-        .game-screen {
-            overflow: hidden;
-        }
-
-        /* Adicionar smooth scroll */
-        .content {
-            scroll-behavior: smooth;
-        }
-
-        /* Adicionar animação de fade in para elementos */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+        /* --- Media Queries --- */
+        
+        @media (min-width: 400px) {
+            .password-buttons {
+                flex-direction: row;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            .center-btn {
+                flex-direction: row;
+                justify-content: center;
             }
-        }
-
-        .welcome-content > * {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        .welcome-content > *:nth-child(1) {
-            animation-delay: 0.1s;
-        }
-
-        .welcome-content > *:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        /* Melhorias de responsividade para telas muito pequenas */
-        @media (max-width: 360px) {
-            .header h1 {
-                font-size: 1.1em;
-            }
-
-            .header h2 {
-                font-size: 0.65em;
-            }
-
             .btn {
-                padding: 8px 16px;
-                font-size: 13px;
-            }
-
-            .option-text-only {
-                padding: 10px 8px;
-                font-size: 11px;
-                min-height: 50px;
+                width: auto;
+                min-width: 150px;
             }
         }
+        
+        @media (min-width: 768px) {
+            .options {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .option-image {
+                height: 120px;
+            }
 
-        /* Melhorias para telas grandes */
-        @media (min-width: 1440px) {
-            .container {
-                max-width: 1400px;
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .ranking-table {
+                font-size: 1rem;
+            }
+
+            .content {
+                padding: 30px;
+            }
+
+            .welcome-content {
+                max-width: 700px;
                 margin: 0 auto;
-            }
-
-            .header h1 {
-                font-size: 2em;
-            }
-
-            .header h2 {
-                font-size: 1em;
-            }
-
-            .question {
-                font-size: 1.1em;
-                padding: 16px 20px;
-            }
-        }
-
-        /* Adicionar indicador de loading suave */
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        /* Melhorar scrollbar personalizada */
-        .content::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        .content::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .content::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-            border-radius: 10px;
-        }
-
-        .content::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #ffed4e 0%, #ffd700 100%);
-        }
-
-        /* Efeitos para imprimir/PDF */
-        @media print {
-            .header::before,
-            .option::before,
-            .btn::before {
-                display: none;
-            }
-
-            body::before {
-                display: none;
             }
         }
     </style>
@@ -1247,15 +607,15 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎬 Quiz Oscar 2020-2021 🏆</h1>
+            <h1>Quiz Oscar 2020-2021</h1>
             <h2>Feria de las Naciones - Curso de Español</h2>
         </div>
 
-        <!-- Pantalla de Bienvenida -->
         <div class="welcome-screen active">
             <div class="content">
                 <div class="welcome-content">
-                    <div class="welcome-left">
+                    
+                    <div class="welcome-start-card">
                         <div class="image-container">
                             <img src="./images/portada-oscar.jpg" alt="Portada Oscar" class="cover-image">
                         </div>
@@ -1267,23 +627,38 @@
                             <button class="btn" onclick="startGame()">Comenzar Quiz</button>
                         </div>
                     </div>
-                    
-                    <div class="mini-ranking">
-                        <h3>🏆 Ranking de Jugadores</h3>
-                        <table class="mini-ranking-table">
-                            <tbody id="miniRankingBody">
-                                <tr><td colspan="3" style="text-align: center; padding: 10px;">Cargando...</td></tr>
+
+                    <div class="welcome-ranking-card">
+                        <h3>Ranking de Jugadores</h3>
+                        <table class="ranking-table">
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Nombre</th>
+                                    <th>Puntos</th>
+                                    <th>Tiempo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="welcomeRankingBody">
+                                <tr><td colspan="4" style="text-align: center; padding: 10px;">Cargando...</td></tr>
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="welcome-stats-card">
+                        <h4>Películas Favoritas:</h4>
+                        <div id="welcomeStatsFavorites">
+                            <p style="font-size: 0.9rem; text-align: center;">Cargando...</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
 
-        <!-- Pantalla del Juego -->
         <div class="game-screen">
             <div class="content">
-                <div class="timer">⏱️ Tiempo: <span id="timer">0</span>s</div>
+                <div class="timer">Tiempo: <span id="timer">0</span>s</div>
                 <div class="score-display">Puntuación: <span id="currentScore">0</span></div>
                 
                 <div class="question-container">
@@ -1301,7 +676,6 @@
             </div>
         </div>
 
-        <!-- Pantalla de Resultados -->
         <div class="results-screen">
             <div class="content">
                 <div class="results-summary">
@@ -1317,10 +691,9 @@
             </div>
         </div>
 
-        <!-- Pantalla de Ranking -->
         <div class="ranking-screen">
             <div class="content">
-                <h3 style="text-align: center; color: #dc143c; margin-bottom: 10px; font-size: 1.1em;">🏆 Ranking Final 🏆</h3>
+                <h3 style="text-align: center; color: var(--color-yellow); margin-bottom: 15px;">Ranking Final</h3>
 
                 <table class="ranking-table">
                     <thead>
@@ -1343,17 +716,16 @@
 
                 <div class="center-btn">
                     <button class="btn" onclick="resetGame()">Jugar de Nuevo</button>
-                    <button class="btn" onclick="showPasswordPrompt()" style="background: #dc143c; color: white;">🔒 Admin</button>
+                    <button class="btn" onclick="showPasswordPrompt()" style="background: #dc143c; color: white;">Admin</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Senha -->
     <div class="password-modal" id="passwordModal">
         <div class="password-content">
-            <h3>🔒 Acceso Admin</h3>
-            <p style="margin-bottom: 12px; color: #666; font-size: 13px;">Contraseña:</p>
+            <h3>Acceso Admin</h3>
+            <p>Contraseña:</p>
             <input type="password" class="password-input" id="adminPassword" placeholder="Contraseña">
             <div class="password-buttons">
                 <button class="btn btn-cancel" onclick="closePasswordModal()">Cancelar</button>
@@ -1362,7 +734,6 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getDatabase, ref, set, get, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
@@ -1382,8 +753,7 @@
 
         window.firebaseDB = { ref, set, get, remove, database };
         
-        // Carregar ranking inicial
-        loadMiniRanking();
+        loadWelcomeScreenData();
     </script>
 
     <script>
@@ -1495,19 +865,25 @@
 
         let currentQuestion = 0;
         let score = 0;
-        let startTime;
+        let startTime; // Tempo total do quiz
+        let questionStartTime; // *** NOVO: Tempo de início da pergunta atual ***
         let timerInterval;
         let playerName = "";
         let correctCount = 0;
         let selectedFavorite = "";
 
-        async function loadMiniRanking() {
+        async function loadWelcomeScreenData() {
             try {
+                while (!window.firebaseDB) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
                 const { ref, get, database } = window.firebaseDB;
                 const rankingRef = ref(database, 'ranking');
                 const snapshot = await get(rankingRef);
                 
-                const tbody = document.getElementById('miniRankingBody');
+                const tbody = document.getElementById('welcomeRankingBody');
+                if (!tbody) return;
                 tbody.innerHTML = '';
                 
                 if (snapshot.exists()) {
@@ -1518,13 +894,38 @@
                             <td><strong>${index + 1}º</strong></td>
                             <td>${player.name}</td>
                             <td><strong>${player.score}</strong></td>
+                            <td>${player.time}s</td>
                         `;
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 10px;">¡Sé el primero!</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 10px;">¡Sé el primero!</td></tr>';
                 }
             } catch (error) {
-                console.error('Error al cargar ranking:', error);
+                console.error('Error al cargar ranking (welcome):', error);
+                const tbody = document.getElementById('welcomeRankingBody');
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 10px;">Error al cargar</td></tr>';
+                }
+            }
+
+            try {
+                while (!window.firebaseDB) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+
+                const { ref, get, database } = window.firebaseDB;
+                const favoriteMoviesRef = ref(database, 'favoriteMovies');
+                const favoriteMoviesSnapshot = await get(favoriteMoviesRef);
+                let favoriteMoviesStats = favoriteMoviesSnapshot.exists() ? favoriteMoviesSnapshot.val() : {};
+
+                displayStats('welcomeStatsFavorites', favoriteMoviesStats);
+
+            } catch (error) {
+                console.error('Error al cargar stats (welcome):', error);
+                const statsDiv = document.getElementById('welcomeStatsFavorites');
+                if(statsDiv) {
+                    statsDiv.innerHTML = '<p style="font-size: 0.9rem; text-align: center;">Error al cargar stats</p>';
+                }
             }
         }
 
@@ -1542,23 +943,24 @@
             document.querySelector('.welcome-screen').classList.remove('active');
             document.querySelector('.game-screen').classList.add('active');
             
-            startTime = Date.now();
+            startTime = Date.now(); // Marca o início do quiz
             timerInterval = setInterval(updateTimer, 1000);
             
             showQuestion();
         }
 
         function updateTimer() {
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const elapsed = Math.floor((Date.now() - startTime) / 1000); // Mostra o tempo total
             document.getElementById('timer').textContent = elapsed;
         }
 
         function showQuestion() {
+            document.querySelector('.game-screen .content').scrollTop = 0;
+
             const q = questions[currentQuestion];
             document.getElementById('questionNum').textContent = currentQuestion + 1;
             document.getElementById('question').textContent = q.question;
             
-            // Mostrar imagem principal da questão
             const questionImage = document.getElementById('questionImage');
             const questionImageContainer = document.getElementById('questionImageContainer');
             
@@ -1572,8 +974,8 @@
             
             const optionsDiv = document.getElementById('options');
             optionsDiv.innerHTML = '';
+            optionsDiv.classList.remove('answered'); 
             
-            // Questão 10 (índice 9) usa imagens nas opções
             const useImageOptions = (currentQuestion === 9);
             
             q.options.forEach((option, index) => {
@@ -1582,7 +984,6 @@
                 optionDiv.onclick = () => selectOption(index);
                 
                 if (useImageOptions && option.image) {
-                    // Questão 10: mostrar imagem + texto
                     const img = document.createElement('img');
                     img.src = option.image;
                     img.alt = option.text;
@@ -1595,7 +996,6 @@
                     optionDiv.appendChild(img);
                     optionDiv.appendChild(text);
                 } else {
-                    // Questões 1-9: apenas texto
                     const text = document.createElement('div');
                     text.className = 'option-text-only';
                     text.textContent = option.text;
@@ -1606,39 +1006,36 @@
             });
 
             document.getElementById('nextBtn').disabled = true;
+            
+            // *** CORREÇÃO: Marca o tempo de início desta pergunta ***
+            questionStartTime = Date.now();
         }
 
         function selectOption(selected) {
             const q = questions[currentQuestion];
             const options = document.querySelectorAll('.option');
+            const optionsDiv = document.getElementById('options');
             
-            // Questão 10 (índice 9) é a preferência de filme favorito
-            if (currentQuestion === 9) {
-                // Guardar a preferência do usuário
-                selectedFavorite = q.options[selected].text;
-                
-                // Apenas destacar a opção selecionada, sem marcar como certa ou errada
-                options.forEach((opt, idx) => {
-                    opt.onclick = null;
-                    if (idx === selected) {
-                        opt.classList.add('correct'); // Usa a classe correct apenas para visual
-                    }
-                });
-            } else {
-                // Para as outras questões, comportamento normal
-                options.forEach((opt, idx) => {
-                    opt.onclick = null;
-                    if (idx === q.correct) {
-                        opt.classList.add('correct');
-                    } else if (idx === selected) {
-                        opt.classList.add('incorrect');
-                    }
-                });
+            optionsDiv.classList.add('answered');
+            options.forEach(opt => opt.onclick = null);
 
+            if (currentQuestion === 9) {
+                selectedFavorite = q.options[selected].text;
+                options[selected].classList.add('selected');
+            } else {
                 if (selected === q.correct) {
                     correctCount++;
-                    const timeBonus = Math.max(0, 100 - Math.floor((Date.now() - startTime) / 1000));
-                    score += 100 + timeBonus;
+                    
+                    // *** CORREÇÃO: Calcula o bônus com base no questionStartTime ***
+                    const timeForThisQuestion = Math.floor((Date.now() - questionStartTime) / 1000);
+                    const timeBonus = Math.max(0, 100 - timeForThisQuestion); 
+                    
+                    score += 100 + timeBonus; // 100 pontos pela resposta + bônus de tempo
+                    
+                    options[selected].classList.add('correct');
+                } else {
+                    options[selected].classList.add('incorrect');
+                    options[q.correct].classList.add('correct');
                 }
             }
 
@@ -1658,7 +1055,8 @@
         }
 
         function showResults() {
-            const totalTime = Math.floor((Date.now() - startTime) / 1000);
+            // O tempo total (para desempate) ainda usa o startTime original
+            const totalTime = Math.floor((Date.now() - startTime) / 1000); 
             
             document.querySelector('.game-screen').classList.remove('active');
             document.querySelector('.results-screen').classList.add('active');
@@ -1669,11 +1067,14 @@
         }
 
         async function submitResults() {
-            if (!selectedFavorite) {
-                alert('Hubo un error al registrar tu película favorita. Por favor, intenta de nuevo.');
+            if (currentQuestion !== 10) {
                 return;
             }
+            if (!selectedFavorite) {
+                selectedFavorite = "N/A";
+            }
 
+            // O tempo total (para desempate) é pego novamente aqui
             const totalTime = Math.floor((Date.now() - startTime) / 1000);
             
             try {
@@ -1696,8 +1097,11 @@
                     date: new Date().toISOString()
                 });
 
-                favoriteMoviesStats[selectedFavorite] = (favoriteMoviesStats[selectedFavorite] || 0) + 1;
+                if (selectedFavorite !== "N/A") {
+                    favoriteMoviesStats[selectedFavorite] = (favoriteMoviesStats[selectedFavorite] || 0) + 1;
+                }
 
+                // Ordena por pontuação (maior primeiro) e depois por tempo (menor primeiro)
                 rankings.sort((a, b) => {
                     if (b.score !== a.score) return b.score - a.score;
                     return a.time - b.time;
@@ -1716,6 +1120,7 @@
         async function showRanking() {
             document.querySelector('.results-screen').classList.remove('active');
             document.querySelector('.ranking-screen').classList.add('active');
+            document.querySelector('.ranking-screen .content').scrollTop = 0;
 
             try {
                 const { ref, get, database } = window.firebaseDB;
@@ -1748,7 +1153,8 @@
                 }
 
                 displayStats('statsFavorites', favoriteMoviesStats);
-            } catch (error) {
+            } catch (error)
+            {
                 console.error('Error al cargar ranking:', error);
                 document.getElementById('rankingBody').innerHTML = 
                     '<tr><td colspan="4" style="text-align: center; padding: 20px;">Error al cargar</td></tr>';
@@ -1757,14 +1163,17 @@
 
         function displayStats(elementId, stats) {
             const div = document.getElementById(elementId);
+            if (!div) return;
+            
+            div.innerHTML = '';
+            
             const total = Object.values(stats).reduce((a, b) => a + b, 0);
             
             if (total === 0) {
-                div.innerHTML = '<div class="stat-item">Sin datos aún</div>';
+                div.innerHTML = '<div style="font-size: 0.9rem; text-align: center; padding: 10px;">Sin datos aún</div>';
                 return;
             }
             
-            // Mapeamento dos filmes para suas imagens
             const movieImages = {
                 "Parasita": "./images/parasitos.jpg",
                 "Joker": "./images/joker.jpg",
@@ -1814,25 +1223,25 @@
                 closePasswordModal();
                 confirmClearRanking();
             } else {
-                alert('❌ Contraseña incorrecta');
+                alert('Contraseña incorrecta');
                 document.getElementById('adminPassword').value = '';
                 document.getElementById('adminPassword').focus();
             }
         }
 
         async function confirmClearRanking() {
-            if (confirm('⚠️ ¿Eliminar TODO el ranking?\n\nEsta acción NO se puede deshacer.')) {
+            if (confirm('¿Eliminar TODO el ranking?\n\nEsta acción NO se puede deshacer.')) {
                 try {
                     const { ref, remove, database } = window.firebaseDB;
                     
                     await remove(ref(database, 'ranking'));
                     await remove(ref(database, 'favoriteMovies'));
                     
-                    alert('✅ Ranking limpiado');
+                    alert('Ranking limpiado');
                     location.reload();
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('❌ Error al limpiar');
+                    alert('Error al limpiar');
                 }
             }
         }
@@ -1842,6 +1251,7 @@
             if (passwordInput) {
                 passwordInput.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
+                        e.preventDefault();
                         verifyPassword();
                     }
                 });
